@@ -1,0 +1,7 @@
+[
+  { "id": "m1", "name": "Power Protein Shake", "protein": 30, "calories": 250 },
+  { "id": "m2", "name": "Avocado Toast with Egg", "protein": 14, "calories": 300 },
+  { "id": "m3", "name": "Quinoa Salad", "protein": 8, "calories": 220 },
+  { "id": "m4", "name": "Grilled Chicken Breast", "protein": 45, "calories": 200 },
+  { "id": "m5", "name": "Sugar Glazed Donut", "protein": 2, "calories": 350 }
+]
