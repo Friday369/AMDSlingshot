@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: nutriflow
+    env: node
+    plan: free
+    buildCommand: cd nutriflow && npm install
+    startCommand: cd nutriflow && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
