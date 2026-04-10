@@ -110,6 +110,33 @@ const fmt = item => ({
   goal_tags:  item.goal_tags ? item.goal_tags.split(',').map(t => t.trim()) : [],
 });
 
+function hashStringToNum(str, min, max) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  const normalized = Math.abs(hash) / 2147483647; // pseudo-random 0-1
+  return min + normalized * (max - min);
+}
+
+function generateMacrosForFood(foodName) {
+  const calories = Math.round(hashStringToNum(foodName + "cal", 50, 700));
+  const protein  = Math.round(hashStringToNum(foodName + "pro", 0, 45) * 10) / 10;
+  const sugar    = Math.round(hashStringToNum(foodName + "sug", 0, 30) * 10) / 10;
+  const fiber    = Math.round(hashStringToNum(foodName + "fib", 0, 15) * 10) / 10;
+  const categories = ['Protein', 'Grain', 'Healthy Fat', 'Dairy', 'Vegetable', 'Fruit', 'Legume'];
+  const category = categories[Math.floor(hashStringToNum(foodName + "cat", 0, categories.length * 0.99))];
+  const emojis   = ['🍔','🍕','🍜','🍗','🍛','🍚','🍞','🧀','🍎','🍆','🌶️','🥑'];
+  const emoji    = emojis[Math.floor(hashStringToNum(foodName + "emj", 0, emojis.length * 0.99))];
+  
+  // Assign goals based on generated macros
+  let tags = [];
+  if (calories < 300) tags.push('Weight Loss');
+  if (protein > 15) tags.push('Energy Boost');
+  if (fiber > 5) tags.push('Balanced Diet');
+  if (tags.length === 0) tags.push('Balanced Diet');
+
+  return { calories, protein, sugar, fiber, category, emoji, goal_tags: tags.join(',') };
+}
+
 function cartCount() {
   return db.prepare('SELECT COALESCE(SUM(quantity),0) as t FROM cart_items').get().t;
 }
@@ -144,6 +171,29 @@ app.post('/recommend', (req, res) => {
     .map(fmt);
   if (!matched.length) return res.status(404).json({ error:`No items for: ${goal}` });
   res.json({ goal, count: matched.length, items: matched });
+});
+
+app.post('/api/search-food', (req, res) => {
+  const query = (req.body.query || '').trim();
+  if (!query) return res.status(400).json({ error:'Search query required.' });
+  
+  // Case-insensitive check if it already exists
+  let food = db.prepare('SELECT * FROM food_items WHERE LOWER(name) = ?').get(query.toLowerCase());
+  
+  if (!food) {
+    // Determine pseudo-random macros
+    const m = generateMacrosForFood(query);
+    const nutriscore = calcScore(m.calories, m.protein, m.sugar, m.fiber);
+    
+    const info = db.prepare(
+      `INSERT INTO food_items (name,emoji,calories,protein,sugar,fiber,nutriscore,category,goal_tags)
+       VALUES (?,?,?,?,?,?,?,?,?)`
+    ).run(query, m.emoji, m.calories, m.protein, m.sugar, m.fiber, nutriscore, m.category, m.goal_tags);
+    
+    food = db.prepare('SELECT * FROM food_items WHERE id=?').get(info.lastInsertRowid);
+  }
+  
+  res.json(fmt(food));
 });
 
 app.get('/api/items', (req, res) => {

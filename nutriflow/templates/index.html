@@ -55,11 +55,12 @@
       </div>
       <span class="text-xl font-black tracking-tight">Nutri<span class="text-green-400">Flow</span></span>
     </a>
-    <!-- Links -->
+    <!-- Links & Translate -->
     <div class="hidden sm:flex items-center gap-6 text-sm text-slate-400">
       <a href="#catalog"   class="hover:text-white transition-colors">Catalog</a>
       <a href="#recommend" class="hover:text-white transition-colors">Recommend</a>
       <a href="#about"     class="hover:text-white transition-colors">About</a>
+      <div id="google_translate_element" class="scale-90 origin-right"></div>
     </div>
     <!-- Cart Button -->
     <a href="/cart" id="nav-cart"
@@ -124,6 +125,22 @@
       <button onclick="filterCat('Vegetable')" data-cat="Vegetable" class="flt pill bg-slate-700/50 text-slate-400 border border-white/5">Vegetable</button>
       <button onclick="filterCat('Fruit')"     data-cat="Fruit"     class="flt pill bg-slate-700/50 text-slate-400 border border-white/5">Fruit</button>
     </div>
+  </div>
+
+  <!-- Search Custom Food Engine -->
+  <div class="glass rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-center gap-4 border border-violet-500/30 bg-violet-500/5 shadow-lg">
+    <div class="flex-1">
+      <h3 class="text-xl font-bold">Craving something specific?</h3>
+      <p class="text-sm text-slate-400 mt-1">Search for any dish in the world (e.g., 'Masala Dosa' or 'Butter Chicken'). Our system instantly analyzes its macros and assigns a NutriScore!</p>
+    </div>
+    <form class="flex w-full sm:w-auto gap-2" onsubmit="searchCustomFood(event)">
+      <input type="text" id="custom-food-input" placeholder="Type any food name..." required
+             class="flex-1 w-full sm:w-64 rounded-xl bg-[#0f172a] border border-white/10 px-4 py-3 text-sm focus:outline-none focus:border-violet-500 transition-colors text-white" />
+      <button type="submit" id="search-food-btn"
+              class="rounded-xl bg-violet-600 px-6 py-3 text-sm font-bold shadow hover:bg-violet-500 active:scale-95 transition-all text-white whitespace-nowrap">
+        🔍 Analyze
+      </button>
+    </form>
   </div>
 
   <div id="food-grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -267,6 +284,12 @@
 </div>
 
 <!-- ══ SCRIPTS ═══════════════════════════════════════════════════════════════ -->
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'hi,bn,te,mr,ta,ur,gu,kn,or,ms,pa,en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 <script>
 // ── Cart badge helpers ──────────────────────────────────────────────────────
 function updateBadge(count) {
@@ -371,6 +394,37 @@ function renderResults(data) {
       </div>`;
     box.appendChild(el);
   });
+}
+
+// ── Custom Food Search ──────────────────────────────────────────────────────
+async function searchCustomFood(e) {
+  e.preventDefault();
+  const input = document.getElementById('custom-food-input');
+  const query = input.value.trim();
+  if (!query) return;
+
+  const btn = document.getElementById('search-food-btn');
+  const orgBtn = btn.innerHTML;
+  btn.innerHTML = '⏳...'; btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/search-food', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ query })
+    });
+    const item = await res.json();
+    if (res.ok) {
+      showToast(`✨ Analyzed & Added: ${item.name}`);
+      input.value = '';
+      setTimeout(() => location.reload(), 1200); // reload to show new item in grid
+    } else {
+      showToast('⚠️ Error analyzing', true);
+      btn.innerHTML = orgBtn; btn.disabled = false;
+    }
+  } catch(e) {
+    showToast('🔴 Network error', true);
+    btn.innerHTML = orgBtn; btn.disabled = false;
+  }
 }
 
 // ── Toast ───────────────────────────────────────────────────────────────────
