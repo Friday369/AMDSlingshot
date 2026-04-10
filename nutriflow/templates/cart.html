@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriFlow · Your Cart</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans:['Inter','sans-serif'] },
+          animation: {
+            'fade-in':  'fadeIn .4s ease both',
+            'slide-up': 'slideUp .4s cubic-bezier(.22,1,.36,1) both',
+            'bounce-sm':'bounceSm .6s ease',
+          },
+          keyframes: {
+            fadeIn:   { from:{opacity:0}, to:{opacity:1} },
+            slideUp:  { from:{opacity:0,transform:'translateY(20px)'}, to:{opacity:1,transform:'translateY(0)'} },
+            bounceSm: { '0%,100%':{transform:'scale(1)'}, '50%':{transform:'scale(1.15)'} },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body { font-family:'Inter',sans-serif; }
+    .hero-mesh {
+      background:
+        radial-gradient(ellipse 70% 50% at 10% 0%,  rgba(34,197,94,.15) 0%,transparent 60%),
+        radial-gradient(ellipse 50% 40% at 90% 5%,  rgba(139,92,246,.12) 0%,transparent 55%),
+        #080e1a;
+    }
+    .glass { background:rgba(30,41,59,.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.07); }
+    .pill  { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:9999px;font-size:.7rem;font-weight:600;letter-spacing:.03em; }
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:#0f172a; }
+    ::-webkit-scrollbar-thumb { background:#334155;border-radius:9999px; }
+  </style>
+</head>
+<body class="hero-mesh min-h-screen text-slate-100 antialiased">
+
+<!-- ══ NAV ══════════════════════════════════════════════════════════════════ -->
+<nav class="sticky top-0 z-50 w-full border-b border-white/5 bg-[#080e1a]/80 backdrop-blur-xl">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-green-600 group-hover:scale-110 transition-transform duration-200">
+        <span class="text-lg">🌿</span>
+      </div>
+      <span class="text-xl font-black tracking-tight">Nutri<span class="text-green-400">Flow</span></span>
+    </a>
+    <div class="flex items-center gap-3">
+      <a href="/" class="text-sm text-slate-400 hover:text-white transition-colors">← Back to Menu</a>
+      <div class="h-4 w-px bg-white/10"></div>
+      <span class="flex items-center gap-1.5 text-sm font-semibold text-slate-200">
+        🛒 Cart
+        <span id="nav-badge"
+              class="{{ 'hidden' if cartCount == 0 else '' }} flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-[.65rem] font-black text-white">
+          {{ cartCount }}
+        </span>
+      </span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MAIN ══════════════════════════════════════════════════════════════════ -->
+<main class="mx-auto max-w-5xl px-4 py-10 sm:px-6 animate-fade-in">
+
+  <div class="mb-8">
+    <h1 class="text-3xl font-black sm:text-4xl">Your Cart 🛒</h1>
+    <p class="mt-1 text-sm text-slate-400">Review your selections, adjust quantities, and place your order.</p>
+  </div>
+
+  {% if itemCount == 0 %}
+  <!-- ── Empty State ── -->
+  <div class="glass rounded-3xl p-16 text-center animate-slide-up">
+    <div class="text-7xl mb-4">🛒</div>
+    <h2 class="text-xl font-black">Your cart is empty</h2>
+    <p class="mt-2 text-sm text-slate-400">Head back to the menu and add some delicious meals!</p>
+    <a href="/" class="mt-6 inline-flex items-center gap-2 rounded-xl bg-green-500 px-6 py-3 text-sm font-bold text-white hover:bg-green-600 active:scale-95 transition-all">
+      🥗 Browse Menu
+    </a>
+  </div>
+
+  {% else %}
+  <!-- ── Cart Layout ── -->
+  <div class="grid gap-8 lg:grid-cols-3">
+
+    <!-- Cart items list (spans 2 cols) -->
+    <div class="lg:col-span-2 space-y-4" id="cart-list">
+      {% for item in items %}
+      <div id="row-{{ item.food_id }}"
+           style="animation-delay:{{ loop.index * 0.06 }}s"
+           class="glass rounded-2xl p-5 flex items-center gap-4 animate-slide-up transition-all duration-300">
+
+        <!-- Emoji -->
+        <div class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-white/8 text-3xl">
+          {{ item.emoji }}
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 min-w-0">
+          <div class="font-bold">{{ item.name }}</div>
+          <div class="mt-0.5 flex flex-wrap gap-x-3 text-xs text-slate-400">
+            <span>🔥 {{ item.calories }}kcal</span>
+            <span>💪 {{ item.protein }}g protein</span>
+            <span>🌾 {{ item.fiber }}g fiber</span>
+          </div>
+          <div class="mt-1.5 flex items-center gap-2">
+            <!-- NutriScore pill -->
+            {% set sc = item.nutriscore %}
+            {% if sc >= 70 %}
+            <span class="pill bg-green-500/15 text-green-400 border border-green-500/20">NS {{ sc }}</span>
+            {% elif sc >= 45 %}
+            <span class="pill bg-yellow-500/15 text-yellow-300 border border-yellow-500/20">NS {{ sc }}</span>
+            {% else %}
+            <span class="pill bg-red-500/15 text-red-400 border border-red-500/20">NS {{ sc }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Qty controls -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+          <button onclick="changeQty({{ item.food_id }}, 'remove')"
+                  class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/8 text-slate-300 hover:bg-white/16 hover:text-white active:scale-90 transition-all text-lg font-bold">−</button>
+          <span id="qty-{{ item.food_id }}" class="w-6 text-center font-black text-base">{{ item.quantity }}</span>
+          <button onclick="changeQty({{ item.food_id }}, 'add')"
+                  class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-500/20 text-green-300 hover:bg-green-500/40 hover:text-white active:scale-90 transition-all text-lg font-bold">+</button>
+        </div>
+
+        <!-- Delete -->
+        <button onclick="deleteItem({{ item.food_id }}, this)"
+                class="flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/25 active:scale-90 transition-all"
+                title="Remove">
+          🗑️
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Order Summary Sidebar -->
+    <div class="space-y-4">
+
+      <!-- Macro Summary -->
+      <div class="glass rounded-2xl p-5 space-y-3">
+        <h3 class="text-sm font-black uppercase tracking-wider text-slate-400">Nutrition Summary</h3>
+
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-400">🔥 Total Calories</span>
+            <span id="s-cal" class="font-bold">{{ totalCalories }} kcal</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">💪 Total Protein</span>
+            <span id="s-pro" class="font-bold">{{ totalProtein }}g</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">🍬 Total Sugar</span>
+            <span id="s-sug" class="font-bold">{{ totalSugar }}g</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">🌾 Total Fiber</span>
+            <span id="s-fib" class="font-bold">{{ totalFiber }}g</span>
+          </div>
+          <div class="h-px bg-white/8 my-1"></div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">🧬 Avg NutriScore</span>
+            <span id="s-ns" class="font-black text-green-400 text-base">{{ avgNutriScore }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">📦 Total Items</span>
+            <span id="s-items" class="font-bold">{{ itemCount }}</span>
+          </div>
+        </div>
+
+        <!-- NutriScore bar -->
+        <div>
+          <div class="flex justify-between text-xs text-slate-500 mb-1"><span>Health Score</span><span>{{ avgNutriScore }}/100</span></div>
+          <div class="h-2 w-full rounded-full bg-white/10 overflow-hidden">
+            <div id="ns-bar"
+                 class="h-full rounded-full transition-all duration-700"
+                 style="width:{{ avgNutriScore }}%;background:{{ '#4ade80' if avgNutriScore >= 70 else ('#facc15' if avgNutriScore >= 45 else '#f87171') }}">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="glass rounded-2xl p-5 space-y-3">
+        <button id="checkout-btn" onclick="checkout()"
+                class="w-full rounded-xl bg-green-500 py-3.5 text-sm font-black text-white hover:bg-green-600 active:scale-95 transition-all shadow-lg">
+          ✅ Place Order
+        </button>
+        <button onclick="clearCart()"
+                class="w-full rounded-xl bg-white/5 border border-white/10 py-3 text-sm font-semibold text-slate-400 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 active:scale-95 transition-all">
+          🗑 Clear Cart
+        </button>
+        <a href="/"
+           class="block w-full text-center rounded-xl bg-white/5 border border-white/10 py-3 text-sm font-semibold text-slate-400 hover:bg-white/10 active:scale-95 transition-all">
+          ← Continue Shopping
+        </a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</main>
+
+<!-- ══ ORDER SUCCESS MODAL ══════════════════════════════════════════════════ -->
+<div id="success-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
+  <div class="glass rounded-3xl p-8 max-w-md w-full text-center animate-slide-up">
+    <div class="text-6xl mb-4">🎉</div>
+    <h2 class="text-2xl font-black">Order Placed!</h2>
+    <p id="order-id" class="mt-2 text-sm text-slate-400"></p>
+    <p class="mt-3 text-sm text-slate-300">Your healthy meal is being prepared. Enjoy!</p>
+    <div class="mt-6 flex flex-col gap-3">
+      <a href="/" class="rounded-xl bg-green-500 py-3 text-sm font-bold text-white hover:bg-green-600 active:scale-95 transition-all">
+        🥗 Order More
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ════════════════════════════════════════════════════════════════ -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+  <div id="toast-inner" class="rounded-xl bg-green-500 px-5 py-3 text-sm font-semibold text-white shadow-xl animate-slide-up">
+    <span id="toast-msg"></span>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ═══════════════════════════════════════════════════════════════ -->
+<script>
+let toastTimer;
+
+function showToast(msg, isError=false) {
+  clearTimeout(toastTimer);
+  const inner = document.getElementById('toast-inner');
+  inner.className = inner.className.replace(/bg-green-500|bg-red-500/g, isError ? 'bg-red-500' : 'bg-green-500');
+  document.getElementById('toast-msg').textContent = msg;
+  document.getElementById('toast').classList.remove('hidden');
+  toastTimer = setTimeout(() => document.getElementById('toast').classList.add('hidden'), 3000);
+}
+
+function updateBadge(count) {
+  const badge = document.getElementById('nav-badge');
+  if (badge) { badge.textContent = count; badge.classList.toggle('hidden', count === 0); }
+}
+
+async function refreshSummary() {
+  const res  = await fetch('/api/cart');
+  const data = await res.json();
+  const set  = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  set('s-cal',   data.totalCalories + ' kcal');
+  set('s-pro',   data.totalProtein + 'g');
+  set('s-sug',   data.totalSugar + 'g');
+  set('s-fib',   data.totalFiber + 'g');
+  set('s-ns',    data.avgNutriScore);
+  set('s-items', data.itemCount);
+  updateBadge(data.itemCount);
+
+  const bar = document.getElementById('ns-bar');
+  if (bar) {
+    bar.style.width = data.avgNutriScore + '%';
+    bar.style.background = data.avgNutriScore>=70?'#4ade80':data.avgNutriScore>=45?'#facc15':'#f87171';
+  }
+
+  // If empty after update — reload to show empty state
+  if (data.itemCount === 0) location.reload();
+}
+
+async function changeQty(foodId, action) {
+  const url = action === 'add' ? '/cart/add' : '/cart/remove';
+  const body = action === 'add'
+    ? { food_id: foodId }
+    : { food_id: foodId };
+
+  const res  = await fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!data.success) { showToast('⚠️ Error', true); return; }
+
+  // Update qty display
+  const qtyEl = document.getElementById(`qty-${foodId}`);
+  if (action === 'remove' && data.cartCount === 0) {
+    location.reload(); return;
+  }
+  if (qtyEl) {
+    const cur = parseInt(qtyEl.textContent, 10);
+    const next = action === 'add' ? cur + 1 : cur - 1;
+    if (next <= 0) {
+      document.getElementById(`row-${foodId}`)?.remove();
+    } else {
+      qtyEl.textContent = next;
+      qtyEl.classList.add('animate-bounce-sm');
+      setTimeout(() => qtyEl.classList.remove('animate-bounce-sm'), 600);
+    }
+  }
+  await refreshSummary();
+}
+
+async function deleteItem(foodId, btn) {
+  btn.disabled = true;
+  const res  = await fetch('/cart/delete', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ food_id: foodId }),
+  });
+  const data = await res.json();
+  if (data.success) {
+    const row = document.getElementById(`row-${foodId}`);
+    if (row) {
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(30px)';
+      row.style.transition = 'all .3s ease';
+      setTimeout(() => { row.remove(); refreshSummary(); }, 300);
+    }
+    showToast('🗑 Item removed');
+  }
+}
+
+async function clearCart() {
+  if (!confirm('Clear all items from your cart?')) return;
+  const res = await fetch('/cart/clear', { method:'POST', headers:{'Content-Type':'application/json'} });
+  if ((await res.json()).success) location.reload();
+}
+
+async function checkout() {
+  const btn = document.getElementById('checkout-btn');
+  btn.textContent = '⏳ Placing order…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/cart/checkout', { method:'POST', headers:{'Content-Type':'application/json'} });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('order-id').textContent = `Order ID: ${data.orderId}`;
+      document.getElementById('success-modal').classList.remove('hidden');
+    } else {
+      showToast('⚠️ ' + (data.error||'Error'), true);
+      btn.textContent = '✅ Place Order'; btn.disabled = false;
+    }
+  } catch(e) {
+    showToast('🔴 Network error', true);
+    btn.textContent = '✅ Place Order'; btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

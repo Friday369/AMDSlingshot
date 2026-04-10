@@ -3,450 +3,389 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="NutriFlow — AI-powered smart food ordering that helps you build healthier eating habits through personalised NutriScore recommendations." />
+  <meta name="description" content="NutriFlow — AI-powered smart food ordering that helps you build healthier eating habits." />
   <title>NutriFlow · Smart Food Ordering</title>
-
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: {
-            brand:   { 50:'#f0fdf4', 100:'#dcfce7', 400:'#4ade80', 500:'#22c55e', 600:'#16a34a', 700:'#15803d' },
-            accent:  { 400:'#a78bfa', 500:'#8b5cf6', 600:'#7c3aed' },
-            surface: { 800:'#1e293b', 850:'#172033', 900:'#0f172a', 950:'#080e1a' },
-          },
+          fontFamily: { sans: ['Inter','sans-serif'] },
           animation: {
-            'fade-in':    'fadeIn 0.4s ease both',
-            'slide-up':   'slideUp 0.45s cubic-bezier(.22,1,.36,1) both',
+            'fade-in':    'fadeIn .4s ease both',
+            'slide-up':   'slideUp .45s cubic-bezier(.22,1,.36,1) both',
             'pulse-glow': 'pulseGlow 2.5s ease-in-out infinite',
           },
           keyframes: {
             fadeIn:    { from:{opacity:0}, to:{opacity:1} },
-            slideUp:   { from:{opacity:0,transform:'translateY(28px)'}, to:{opacity:1,transform:'translateY(0)'} },
-            pulseGlow: { '0%,100%':{boxShadow:'0 0 15px 3px rgba(74,222,128,0.35)'}, '50%':{boxShadow:'0 0 28px 8px rgba(74,222,128,0.65)'} },
+            slideUp:   { from:{opacity:0,transform:'translateY(24px)'}, to:{opacity:1,transform:'translateY(0)'} },
+            pulseGlow: { '0%,100%':{boxShadow:'0 0 16px 3px rgba(74,222,128,.35)'}, '50%':{boxShadow:'0 0 30px 8px rgba(74,222,128,.65)'} },
           },
         },
       },
     };
   </script>
-
   <style>
-    body { font-family: 'Inter', sans-serif; }
-
+    body { font-family:'Inter',sans-serif; }
     .hero-mesh {
       background:
-        radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(34,197,94,.18) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(139,92,246,.15) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(34,197,94,.18) 0%,transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 10%, rgba(139,92,246,.15) 0%,transparent 55%),
         #080e1a;
     }
-    .card-glass {
-      background: rgba(30,41,59,.6);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-    .top-scorer {
-      animation: pulseGlow 2.5s ease-in-out infinite;
-      border: 1px solid rgba(74,222,128,.55) !important;
-    }
-    .score-ring { transition: stroke-dashoffset .8s cubic-bezier(.4,0,.2,1); }
-    .goal-pill  { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:9999px; font-size:.7rem; font-weight:600; letter-spacing:.03em; text-transform:uppercase; }
-    ::-webkit-scrollbar       { width:6px; }
+    .glass { background:rgba(30,41,59,.6); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.07); }
+    .top-scorer { animation:pulseGlow 2.5s ease-in-out infinite; border:1px solid rgba(74,222,128,.55)!important; }
+    .pill { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:9999px;font-size:.7rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase; }
+    ::-webkit-scrollbar { width:6px; }
     ::-webkit-scrollbar-track { background:#0f172a; }
-    ::-webkit-scrollbar-thumb { background:#334155; border-radius:9999px; }
+    ::-webkit-scrollbar-thumb { background:#334155;border-radius:9999px; }
   </style>
 </head>
-
 <body class="hero-mesh min-h-screen text-slate-100 antialiased">
 
-  <!-- ======== NAV ======== -->
-  <nav class="sticky top-0 z-50 w-full border-b border-white/5 bg-[#080e1a]/80 backdrop-blur-xl">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-      <a href="/" id="nav-logo" class="flex items-center gap-2.5 group">
-        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-green-600 shadow-lg group-hover:scale-110 transition-transform duration-200">
-          <span class="text-lg">🌿</span>
-        </div>
-        <span class="text-xl font-black tracking-tight">Nutri<span class="text-green-400">Flow</span></span>
-      </a>
-      <div class="hidden sm:flex items-center gap-6 text-sm text-slate-400">
-        <a href="#catalog"   class="hover:text-white transition-colors">Catalog</a>
-        <a href="#recommend" class="hover:text-white transition-colors">Recommend</a>
-        <a href="#about"     class="hover:text-white transition-colors">About</a>
+<!-- ══ NAV ══════════════════════════════════════════════════════════════════ -->
+<nav class="sticky top-0 z-50 w-full border-b border-white/5 bg-[#080e1a]/80 backdrop-blur-xl">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-2.5 group">
+      <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-green-600 group-hover:scale-110 transition-transform duration-200">
+        <span class="text-lg">🌿</span>
       </div>
-      <a href="#recommend" id="nav-cta"
-         class="rounded-lg bg-green-500 px-4 py-2 text-sm font-semibold text-white hover:bg-green-600 active:scale-95 transition-all duration-150">
-        Get Recommendations
-      </a>
+      <span class="text-xl font-black tracking-tight">Nutri<span class="text-green-400">Flow</span></span>
+    </a>
+    <!-- Links -->
+    <div class="hidden sm:flex items-center gap-6 text-sm text-slate-400">
+      <a href="#catalog"   class="hover:text-white transition-colors">Catalog</a>
+      <a href="#recommend" class="hover:text-white transition-colors">Recommend</a>
+      <a href="#about"     class="hover:text-white transition-colors">About</a>
     </div>
-  </nav>
-
-  <!-- ======== HERO ======== -->
-  <header class="mx-auto max-w-7xl px-4 pb-12 pt-16 sm:px-6 sm:pt-20 animate-fade-in">
-    <div class="mx-auto max-w-2xl text-center">
-      <span class="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-green-400">
-        <span class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span>
-        AI-Powered Food Intelligence
+    <!-- Cart Button -->
+    <a href="/cart" id="nav-cart"
+       class="relative flex items-center gap-2 rounded-lg bg-white/8 border border-white/10 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-white/14 active:scale-95 transition-all duration-150">
+      <span class="text-base">🛒</span>
+      <span class="hidden sm:inline">Cart</span>
+      <span id="cart-badge"
+            class="{{ 'hidden' if cartCount == 0 else '' }} absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 text-[.65rem] font-black text-white shadow">
+        {{ cartCount }}
       </span>
-      <h1 class="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-6xl">
-        Eat Smarter,<br />
-        <span class="bg-gradient-to-r from-green-400 to-violet-400 bg-clip-text text-transparent">
-          Feel Better
-        </span>
-      </h1>
-      <p class="mt-5 text-base leading-relaxed text-slate-400 sm:text-lg">
-        NutriFlow's proprietary <strong class="text-slate-200">NutriScore™</strong> algorithm analyses
-        calories, protein, sugar &amp; fibre to surface the healthiest meals tailored to your personal goal.
-      </p>
-      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <a href="#recommend" id="hero-cta-primary"
-           class="rounded-xl bg-green-500 px-7 py-3.5 text-sm font-bold text-white shadow-lg hover:bg-green-600 active:scale-95 transition-all duration-200">
-          📊 Get My Recommendations
-        </a>
-        <a href="#catalog" id="hero-cta-secondary"
-           class="rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-semibold text-slate-300 hover:bg-white/10 active:scale-95 transition-all duration-150">
-          Browse Catalog →
-        </a>
-      </div>
-    </div>
+    </a>
+  </div>
+</nav>
 
-    <!-- Stats Strip -->
-    <div class="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4">
-      <div class="card-glass rounded-2xl p-4 text-center"><div class="text-2xl">🥗</div><div class="mt-1 text-xl font-black text-white">10</div><div class="text-xs text-slate-500">Curated Meals</div></div>
-      <div class="card-glass rounded-2xl p-4 text-center"><div class="text-2xl">⚡</div><div class="mt-1 text-xl font-black text-white">3</div><div class="text-xs text-slate-500">Health Goals</div></div>
-      <div class="card-glass rounded-2xl p-4 text-center"><div class="text-2xl">🧬</div><div class="mt-1 text-xl font-black text-white">Real-Time</div><div class="text-xs text-slate-500">NutriScore Engine</div></div>
-      <div class="card-glass rounded-2xl p-4 text-center"><div class="text-2xl">🏆</div><div class="mt-1 text-xl font-black text-white">Smart</div><div class="text-xs text-slate-500">Nudge System</div></div>
-    </div>
-  </header>
-
-  <main>
-    <!-- ======== FOOD CATALOG ======== -->
-    <section id="catalog" class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
-      <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h2 class="text-2xl font-black sm:text-3xl">Food Catalog</h2>
-          <p class="mt-1 text-sm text-slate-400">All items ranked by NutriScore™ — highest first. ⭐ = Smart Nudge pick.</p>
-        </div>
-        <div class="flex flex-wrap gap-2" id="filter-pills">
-          <button onclick="filterCategory('all')"       data-cat="all"        class="filter-btn goal-pill bg-green-500/20 text-green-300 border border-green-500/30">All</button>
-          <button onclick="filterCategory('Protein')"   data-cat="Protein"    class="filter-btn goal-pill bg-slate-700/50 text-slate-400 border border-white/5">Protein</button>
-          <button onclick="filterCategory('Grain')"     data-cat="Grain"      class="filter-btn goal-pill bg-slate-700/50 text-slate-400 border border-white/5">Grain</button>
-          <button onclick="filterCategory('Legume')"    data-cat="Legume"     class="filter-btn goal-pill bg-slate-700/50 text-slate-400 border border-white/5">Legume</button>
-          <button onclick="filterCategory('Vegetable')" data-cat="Vegetable"  class="filter-btn goal-pill bg-slate-700/50 text-slate-400 border border-white/5">Vegetable</button>
-          <button onclick="filterCategory('Fruit')"     data-cat="Fruit"      class="filter-btn goal-pill bg-slate-700/50 text-slate-400 border border-white/5">Fruit</button>
-        </div>
-      </div>
-
-      <!-- Cards Grid -->
-      <div id="food-grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {% for item in items %}
-        {% set is_top = loop.first %}
-        {% set score_color = '#4ade80' if item.nutriscore >= 70 else ('#facc15' if item.nutriscore >= 45 else '#f87171') %}
-        {% set circ_offset = (125.66 * (1 - item.nutriscore / 100)) | round(2) %}
-
-        <article
-          data-category="{{ item.category }}"
-          style="animation-delay: {{ loop.index * 0.05 }}s"
-          class="food-card relative card-glass rounded-2xl p-5 flex flex-col gap-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-xl animate-slide-up
-                 {% if is_top %}top-scorer{% endif %}">
-
-          {% if is_top %}
-          <div class="absolute -top-3 left-4 z-10">
-            <span class="goal-pill bg-green-500 text-white shadow-lg text-[.65rem] px-3 py-1">⭐ Smart Nudge Pick</span>
-          </div>
-          {% endif %}
-
-          <!-- Header -->
-          <div class="flex items-start justify-between">
-            <div class="flex items-center gap-3">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl text-2xl {{ 'bg-green-500/20' if is_top else 'bg-white/5' }}">
-                {{ item.emoji }}
-              </div>
-              <div>
-                <h3 class="font-bold leading-tight">{{ item.name }}</h3>
-                <span class="text-xs text-slate-500">{{ item.category }}</span>
-              </div>
-            </div>
-
-            <!-- NutriScore Ring -->
-            <div class="relative flex-shrink-0">
-              <svg class="h-14 w-14 -rotate-90" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="#1e293b" stroke-width="4"/>
-                <circle cx="24" cy="24" r="20" fill="none"
-                        stroke="{{ score_color }}"
-                        stroke-width="4" stroke-linecap="round"
-                        stroke-dasharray="125.66"
-                        stroke-dashoffset="{{ circ_offset }}"
-                        class="score-ring"/>
-              </svg>
-              <span class="absolute inset-0 flex items-center justify-center text-xs font-black">{{ item.nutriscore }}</span>
-            </div>
-          </div>
-
-          <!-- Macros Grid -->
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5">
-              <span>🔥</span>
-              <div><div class="text-[.65rem] text-slate-500">Calories</div><div class="font-semibold">{{ item.calories }}kcal</div></div>
-            </div>
-            <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5">
-              <span>💪</span>
-              <div><div class="text-[.65rem] text-slate-500">Protein</div><div class="font-semibold">{{ item.protein }}g</div></div>
-            </div>
-            <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5">
-              <span>🍬</span>
-              <div><div class="text-[.65rem] text-slate-500">Sugar</div><div class="font-semibold">{{ item.sugar }}g</div></div>
-            </div>
-            <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5">
-              <span>🌾</span>
-              <div><div class="text-[.65rem] text-slate-500">Fiber</div><div class="font-semibold">{{ item.fiber }}g</div></div>
-            </div>
-          </div>
-
-          <!-- Goal Tags -->
-          <div class="flex flex-wrap gap-1 mt-auto">
-            {% for tag in item.goal_tags %}
-              {% if tag == 'Weight Loss' %}
-                <span class="goal-pill bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">🎯 {{ tag }}</span>
-              {% elif tag == 'Energy Boost' %}
-                <span class="goal-pill bg-yellow-500/15 text-yellow-300 border border-yellow-500/20">⚡ {{ tag }}</span>
-              {% else %}
-                <span class="goal-pill bg-violet-500/15 text-violet-300 border border-violet-500/20">🌿 {{ tag }}</span>
-              {% endif %}
-            {% endfor %}
-          </div>
-
-          <!-- Order Button -->
-          <button onclick="orderItem('{{ item.name }}', {{ item.nutriscore }}, this)"
-                  class="w-full rounded-xl py-2.5 text-sm font-bold transition-all duration-150 active:scale-95
-                         {{ 'bg-green-500 text-white hover:bg-green-600 shadow-lg' if is_top else 'bg-white/8 text-slate-300 hover:bg-white/12 border border-white/10' }}">
-            Order Now
-          </button>
-        </article>
-        {% endfor %}
-      </div>
-    </section>
-
-    <!-- ======== RECOMMEND SECTION ======== -->
-    <section id="recommend" class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div class="card-glass rounded-3xl p-8 sm:p-10">
-        <div class="grid gap-10 lg:grid-cols-2 lg:items-start">
-
-          <!-- Form -->
-          <div>
-            <span class="goal-pill bg-violet-500/15 text-violet-300 border border-violet-500/20 mb-4">🧠 Smart Recommendation Engine</span>
-            <h2 class="text-2xl font-black sm:text-3xl mt-2">Tell Us Your Goal</h2>
-            <p class="mt-2 text-sm text-slate-400">
-              Our NutriScore™ engine surfaces the best meals matched precisely to what your body needs right now.
-            </p>
-
-            <form id="goal-form" class="mt-7 space-y-5" onsubmit="submitGoal(event)">
-              <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Your Health Goal</label>
-                <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <label for="goal-1" class="goal-option flex flex-col gap-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 hover:border-green-500/50 hover:bg-green-500/10 transition-all duration-150">
-                    <input type="radio" id="goal-1" name="goal" value="Weight Loss" class="sr-only" checked />
-                    <span class="text-xl">🎯</span>
-                    <span class="text-sm font-bold">Weight Loss</span>
-                    <span class="text-[.7rem] text-slate-500">Lean &amp; calorie-smart picks</span>
-                  </label>
-                  <label for="goal-2" class="goal-option flex flex-col gap-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 hover:border-green-500/50 hover:bg-green-500/10 transition-all duration-150">
-                    <input type="radio" id="goal-2" name="goal" value="Energy Boost" class="sr-only" />
-                    <span class="text-xl">⚡</span>
-                    <span class="text-sm font-bold">Energy Boost</span>
-                    <span class="text-[.7rem] text-slate-500">High-protein power meals</span>
-                  </label>
-                  <label for="goal-3" class="goal-option flex flex-col gap-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 hover:border-green-500/50 hover:bg-green-500/10 transition-all duration-150">
-                    <input type="radio" id="goal-3" name="goal" value="Balanced Diet" class="sr-only" />
-                    <span class="text-xl">🌿</span>
-                    <span class="text-sm font-bold">Balanced Diet</span>
-                    <span class="text-[.7rem] text-slate-500">Holistic macro balance</span>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Visual selection highlight via JS -->
-              <button type="submit" id="recommend-btn"
-                      class="w-full rounded-xl bg-green-500 py-3.5 text-sm font-bold text-white shadow-lg hover:bg-green-600 active:scale-95 transition-all duration-150">
-                ✨ Show My Recommendations
-              </button>
-            </form>
-          </div>
-
-          <!-- Results Panel -->
-          <div id="results-panel">
-            <div id="results-placeholder" class="flex flex-col items-center justify-center gap-3 py-16 text-center text-slate-500">
-              <span class="text-5xl">🎯</span>
-              <p class="text-sm">Select a goal and hit <strong class="text-slate-300">Show My Recommendations</strong><br />to see personalised results.</p>
-            </div>
-            <div id="results-container" class="hidden space-y-3"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ======== ABOUT ======== -->
-    <section id="about" class="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
-      <div class="grid gap-6 sm:grid-cols-3">
-        <div class="card-glass rounded-2xl p-6">
-          <div class="text-3xl mb-3">🧬</div>
-          <h3 class="font-bold text-base">NutriScore™ Algorithm</h3>
-          <p class="mt-2 text-sm leading-relaxed text-slate-400">A weighted multi-factor scoring engine that evaluates calories, protein, sugar &amp; fibre per serving — giving each meal an honest 0-100 health score.</p>
-        </div>
-        <div class="card-glass rounded-2xl p-6">
-          <div class="text-3xl mb-3">⚙️</div>
-          <h3 class="font-bold text-base">Background Engine</h3>
-          <p class="mt-2 text-sm leading-relaxed text-slate-400">A persistent background process recalculates NutriScores every 60 seconds — ensuring your scores always reflect the latest nutritional data.</p>
-        </div>
-        <div class="card-glass rounded-2xl p-6">
-          <div class="text-3xl mb-3">💡</div>
-          <h3 class="font-bold text-base">Smart Nudge System</h3>
-          <p class="mt-2 text-sm leading-relaxed text-slate-400">The highest-scoring item gets a glowing animated border and a Smart Nudge badge — guiding you toward the best choice effortlessly.</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ======== FOOTER ======== -->
-  <footer class="border-t border-white/5 bg-[#080e1a]/60 py-8 text-center text-xs text-slate-600">
-    <p>Built with ❤️ for the AMD Slingshot Hackathon — <strong class="text-slate-400">NutriFlow</strong> © 2026</p>
-    <p class="mt-1">Node.js · Express · SQLite · Nunjucks · Tailwind CSS</p>
-  </footer>
-
-  <!-- ======== TOAST ======== -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
-    <div id="toast-inner" class="rounded-xl bg-green-500 px-5 py-3 text-sm font-semibold text-white shadow-lg animate-slide-up">
-      <span id="toast-msg"></span>
+<!-- ══ HERO ═════════════════════════════════════════════════════════════════ -->
+<header class="mx-auto max-w-7xl px-4 pb-12 pt-16 sm:px-6 sm:pt-20 animate-fade-in">
+  <div class="mx-auto max-w-2xl text-center">
+    <span class="inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-green-400">
+      <span class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span>
+      AI-Powered Food Intelligence
+    </span>
+    <h1 class="mt-5 text-4xl font-black leading-tight tracking-tight sm:text-6xl">
+      Eat Smarter,<br />
+      <span class="bg-gradient-to-r from-green-400 to-violet-400 bg-clip-text text-transparent">Feel Better</span>
+    </h1>
+    <p class="mt-5 text-base leading-relaxed text-slate-400 sm:text-lg">
+      NutriFlow's <strong class="text-slate-200">NutriScore™</strong> algorithm analyses calories, protein, sugar &amp; fibre to surface the healthiest meals matched to your goal.
+    </p>
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+      <a href="#recommend" class="rounded-xl bg-green-500 px-7 py-3.5 text-sm font-bold text-white shadow-lg hover:bg-green-600 active:scale-95 transition-all duration-200">
+        📊 Get Recommendations
+      </a>
+      <a href="/cart" class="rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-semibold text-slate-300 hover:bg-white/10 active:scale-95 transition-all duration-150">
+        🛒 View Cart
+        {% if cartCount > 0 %}<span class="ml-1.5 rounded-full bg-green-500 px-2 py-0.5 text-xs font-black text-white">{{ cartCount }}</span>{% endif %}
+      </a>
     </div>
   </div>
 
-  <!-- ======== SCRIPTS ======== -->
-  <script>
-    lucide.createIcons();
+  <!-- Stats -->
+  <div class="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl">🥗</div><div class="mt-1 text-xl font-black">10</div><div class="text-xs text-slate-500">Curated Meals</div></div>
+    <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl">⚡</div><div class="mt-1 text-xl font-black">3</div><div class="text-xs text-slate-500">Health Goals</div></div>
+    <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl">🧬</div><div class="mt-1 text-xl font-black">Live</div><div class="text-xs text-slate-500">NutriScore Engine</div></div>
+    <div class="glass rounded-2xl p-4 text-center"><div class="text-2xl">🛒</div><div class="mt-1 text-xl font-black" id="hero-cart-count">{{ cartCount }}</div><div class="text-xs text-slate-500">Items in Cart</div></div>
+  </div>
+</header>
 
-    // ---- Highlight selected goal radio visually ----
-    document.querySelectorAll('input[name="goal"]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        document.querySelectorAll('.goal-option').forEach(label => {
-          label.classList.remove('border-green-500', 'bg-green-500/15');
-          label.classList.add('border-white/10', 'bg-white/5');
-        });
-        const selected = document.querySelector('input[name="goal"]:checked');
-        if (selected) {
-          const label = selected.closest('.goal-option');
-          label.classList.add('border-green-500', 'bg-green-500/15');
-          label.classList.remove('border-white/10', 'bg-white/5');
-        }
-      });
-    });
-    // Highlight default
-    document.querySelector('input[name="goal"]:checked')?.dispatchEvent(new Event('change'));
+<main>
+<!-- ══ FOOD CATALOG ══════════════════════════════════════════════════════════ -->
+<section id="catalog" class="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+  <div class="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-black sm:text-3xl">Food Catalog</h2>
+      <p class="mt-1 text-sm text-slate-400">Ranked by NutriScore™ — highest first. ⭐ = Smart Nudge pick.</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button onclick="filterCat('all')"       data-cat="all"       class="flt pill bg-green-500/20 text-green-300 border border-green-500/30">All</button>
+      <button onclick="filterCat('Protein')"   data-cat="Protein"   class="flt pill bg-slate-700/50 text-slate-400 border border-white/5">Protein</button>
+      <button onclick="filterCat('Grain')"     data-cat="Grain"     class="flt pill bg-slate-700/50 text-slate-400 border border-white/5">Grain</button>
+      <button onclick="filterCat('Legume')"    data-cat="Legume"    class="flt pill bg-slate-700/50 text-slate-400 border border-white/5">Legume</button>
+      <button onclick="filterCat('Vegetable')" data-cat="Vegetable" class="flt pill bg-slate-700/50 text-slate-400 border border-white/5">Vegetable</button>
+      <button onclick="filterCat('Fruit')"     data-cat="Fruit"     class="flt pill bg-slate-700/50 text-slate-400 border border-white/5">Fruit</button>
+    </div>
+  </div>
 
-    // ---- Category Filter ----
-    function filterCategory(cat) {
-      document.querySelectorAll('.food-card').forEach(card => {
-        card.style.display = (cat === 'all' || card.dataset.category === cat) ? '' : 'none';
-      });
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        const active = btn.dataset.cat === cat;
-        btn.className = btn.className.replace(/bg-green-500\/20|text-green-300|border-green-500\/30|bg-slate-700\/50|text-slate-400|border-white\/5/g, '').trim();
-        btn.className += active
-          ? ' bg-green-500/20 text-green-300 border border-green-500/30'
-          : ' bg-slate-700/50 text-slate-400 border border-white/5';
-      });
-    }
+  <div id="food-grid" class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    {% for item in items %}
+    {% set is_top = loop.first %}
+    {% set sc = item.nutriscore %}
+    {% set ring_color = '#4ade80' if sc >= 70 else ('#facc15' if sc >= 45 else '#f87171') %}
+    {% set offset = (125.66 * (1 - sc / 100)) | round(2) %}
 
-    // ---- Goal Form Submit ----
-    async function submitGoal(e) {
-      e.preventDefault();
-      const goal = document.querySelector('input[name="goal"]:checked')?.value;
-      if (!goal) return;
+    <article data-category="{{ item.category }}"
+             style="animation-delay:{{ loop.index * 0.05 }}s"
+             class="food-card relative glass rounded-2xl p-5 flex flex-col gap-4 animate-slide-up
+                    transition-all duration-200 hover:-translate-y-1 hover:shadow-xl
+                    {{ 'top-scorer' if is_top }}">
 
-      const btn = document.getElementById('recommend-btn');
-      btn.textContent = '⏳ Fetching…';
-      btn.disabled = true;
+      {% if is_top %}
+      <div class="absolute -top-3 left-4 z-10">
+        <span class="pill bg-green-500 text-white text-[.65rem] px-3 py-1 shadow">⭐ Smart Nudge Pick</span>
+      </div>
+      {% endif %}
 
-      try {
-        const res  = await fetch('/recommend', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ goal }),
-        });
-        const data = await res.json();
-        if (!res.ok) { showToast('⚠️ ' + (data.error || 'Error'), true); return; }
-        renderResults(data);
-        document.getElementById('results-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } catch(err) {
-        showToast('🔴 Network error — is the server running?', true);
-      } finally {
-        btn.textContent = '✨ Show My Recommendations';
-        btn.disabled = false;
-      }
-    }
-
-    function renderResults(data) {
-      document.getElementById('results-placeholder').classList.add('hidden');
-      const container = document.getElementById('results-container');
-      container.classList.remove('hidden');
-      container.innerHTML = '';
-
-      const header = document.createElement('div');
-      header.className = 'flex items-center gap-3 mb-4';
-      header.innerHTML = `
-        <div class="h-px flex-1 bg-white/10"></div>
-        <span class="text-xs font-bold uppercase tracking-wider text-green-400">${data.count} Results · ${data.goal}</span>
-        <div class="h-px flex-1 bg-white/10"></div>`;
-      container.appendChild(header);
-
-      data.items.forEach((item, i) => {
-        const scoreColor = item.nutriscore >= 70 ? '#4ade80' : item.nutriscore >= 45 ? '#facc15' : '#f87171';
-        const offset     = (125.66 * (1 - item.nutriscore / 100)).toFixed(2);
-
-        const el = document.createElement('div');
-        el.className = 'flex items-center gap-4 rounded-xl bg-white/5 border border-white/8 p-4 animate-slide-up hover:bg-white/8 transition-colors';
-        el.style.animationDelay = `${i * 0.06}s`;
-        el.innerHTML = `
-          <div class="text-3xl">${item.emoji}</div>
-          <div class="flex-1 min-w-0">
-            <div class="font-bold truncate">${item.name}</div>
-            <div class="text-xs text-slate-500 mt-0.5">${item.calories} kcal · ${item.protein}g protein · ${item.fiber}g fiber</div>
+      <!-- Header -->
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-3">
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl text-2xl {{ 'bg-green-500/20' if is_top else 'bg-white/5' }}">{{ item.emoji }}</div>
+          <div>
+            <h3 class="font-bold leading-tight text-sm">{{ item.name }}</h3>
+            <span class="text-xs text-slate-500">{{ item.category }}</span>
           </div>
-          <div class="relative flex-shrink-0">
-            <svg class="h-12 w-12 -rotate-90" viewBox="0 0 48 48">
-              <circle cx="24" cy="24" r="20" fill="none" stroke="#1e293b" stroke-width="4"/>
-              <circle cx="24" cy="24" r="20" fill="none" stroke="${scoreColor}" stroke-width="4"
-                      stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="${offset}"/>
-            </svg>
-            <span class="absolute inset-0 flex items-center justify-center text-[.65rem] font-black">${item.nutriscore}</span>
-          </div>`;
-        container.appendChild(el);
-      });
-    }
+        </div>
+        <!-- Score ring -->
+        <div class="relative flex-shrink-0">
+          <svg class="h-14 w-14 -rotate-90" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="#1e293b" stroke-width="4"/>
+            <circle cx="24" cy="24" r="20" fill="none" stroke="{{ ring_color }}" stroke-width="4"
+                    stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="{{ offset }}"/>
+          </svg>
+          <span class="absolute inset-0 flex items-center justify-center text-xs font-black">{{ sc }}</span>
+        </div>
+      </div>
 
-    // ---- Order Item ----
-    function orderItem(name, score, btn) {
-      btn.textContent = '✅ Added to Cart!';
-      btn.disabled = true;
-      showToast(`🛒 "${name}" added — NutriScore ${score}`);
-      setTimeout(() => { btn.textContent = 'Order Now'; btn.disabled = false; }, 2500);
-    }
+      <!-- Macros -->
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5"><span>🔥</span><div><div class="text-[.65rem] text-slate-500">Calories</div><div class="font-semibold">{{ item.calories }}kcal</div></div></div>
+        <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5"><span>💪</span><div><div class="text-[.65rem] text-slate-500">Protein</div><div class="font-semibold">{{ item.protein }}g</div></div></div>
+        <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5"><span>🍬</span><div><div class="text-[.65rem] text-slate-500">Sugar</div><div class="font-semibold">{{ item.sugar }}g</div></div></div>
+        <div class="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5"><span>🌾</span><div><div class="text-[.65rem] text-slate-500">Fiber</div><div class="font-semibold">{{ item.fiber }}g</div></div></div>
+      </div>
 
-    // ---- Toast ----
-    function showToast(msg, isError = false) {
-      const inner = document.getElementById('toast-inner');
-      inner.className = inner.className.replace(/bg-green-500|bg-red-500/g, isError ? 'bg-red-500' : 'bg-green-500');
-      document.getElementById('toast-msg').textContent = msg;
-      const toast = document.getElementById('toast');
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 3200);
+      <!-- Goal tags -->
+      <div class="flex flex-wrap gap-1 mt-auto">
+        {% for tag in item.goal_tags %}
+          {% if tag == 'Weight Loss' %}<span class="pill bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">🎯 {{ tag }}</span>
+          {% elif tag == 'Energy Boost' %}<span class="pill bg-yellow-500/15 text-yellow-300 border border-yellow-500/20">⚡ {{ tag }}</span>
+          {% else %}<span class="pill bg-violet-500/15 text-violet-300 border border-violet-500/20">🌿 {{ tag }}</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+
+      <!-- Add to Cart button -->
+      <button id="btn-{{ item.id }}"
+              onclick="addToCart({{ item.id }}, '{{ item.name }}', this)"
+              class="w-full rounded-xl py-2.5 text-sm font-bold transition-all duration-150 active:scale-95
+                     {{ 'bg-green-500 text-white hover:bg-green-600 shadow-lg' if is_top else 'bg-white/8 text-slate-300 hover:bg-white/14 border border-white/10' }}">
+        🛒 Add to Cart
+      </button>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ══ RECOMMEND ═══════════════════════════════════════════════════════════ -->
+<section id="recommend" class="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+  <div class="glass rounded-3xl p-8 sm:p-10">
+    <div class="grid gap-10 lg:grid-cols-2 lg:items-start">
+      <!-- Form -->
+      <div>
+        <span class="pill bg-violet-500/15 text-violet-300 border border-violet-500/20 mb-4">🧠 Smart Engine</span>
+        <h2 class="text-2xl font-black sm:text-3xl mt-2">Tell Us Your Goal</h2>
+        <p class="mt-2 text-sm text-slate-400">We'll surface the best meals matched to what your body needs.</p>
+
+        <form id="goal-form" class="mt-7 space-y-5" onsubmit="submitGoal(event)">
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <label for="g1" class="goal-opt flex flex-col gap-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 hover:border-green-500/50 hover:bg-green-500/10 transition-all has-[:checked]:border-green-500 has-[:checked]:bg-green-500/15">
+              <input type="radio" id="g1" name="goal" value="Weight Loss" class="sr-only" checked />
+              <span class="text-xl">🎯</span><span class="text-sm font-bold">Weight Loss</span>
+              <span class="text-[.7rem] text-slate-500">Lean &amp; calorie-smart</span>
+            </label>
+            <label for="g2" class="goal-opt flex flex-col gap-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 hover:border-green-500/50 hover:bg-green-500/10 transition-all has-[:checked]:border-green-500 has-[:checked]:bg-green-500/15">
+              <input type="radio" id="g2" name="goal" value="Energy Boost" class="sr-only" />
+              <span class="text-xl">⚡</span><span class="text-sm font-bold">Energy Boost</span>
+              <span class="text-[.7rem] text-slate-500">High-protein power meals</span>
+            </label>
+            <label for="g3" class="goal-opt flex flex-col gap-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 p-4 hover:border-green-500/50 hover:bg-green-500/10 transition-all has-[:checked]:border-green-500 has-[:checked]:bg-green-500/15">
+              <input type="radio" id="g3" name="goal" value="Balanced Diet" class="sr-only" />
+              <span class="text-xl">🌿</span><span class="text-sm font-bold">Balanced Diet</span>
+              <span class="text-[.7rem] text-slate-500">Holistic macro balance</span>
+            </label>
+          </div>
+          <button type="submit" id="rec-btn"
+                  class="w-full rounded-xl bg-green-500 py-3.5 text-sm font-bold text-white hover:bg-green-600 active:scale-95 transition-all">
+            ✨ Show My Recommendations
+          </button>
+        </form>
+      </div>
+
+      <!-- Results -->
+      <div>
+        <div id="rec-placeholder" class="flex flex-col items-center justify-center gap-3 py-16 text-center text-slate-500">
+          <span class="text-5xl">🎯</span>
+          <p class="text-sm">Select a goal and hit <strong class="text-slate-300">Show My Recommendations</strong>.</p>
+        </div>
+        <div id="rec-results" class="hidden space-y-3"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ════════════════════════════════════════════════════════════════ -->
+<section id="about" class="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
+  <div class="grid gap-6 sm:grid-cols-3">
+    <div class="glass rounded-2xl p-6"><div class="text-3xl mb-3">🧬</div><h3 class="font-bold">NutriScore™</h3><p class="mt-2 text-sm text-slate-400">Weighted 0-100 score from calories, protein, sugar &amp; fibre per serving.</p></div>
+    <div class="glass rounded-2xl p-6"><div class="text-3xl mb-3">⚙️</div><h3 class="font-bold">Background Engine</h3><p class="mt-2 text-sm text-slate-400">Scores recalculate every 60s via a background daemon — always fresh.</p></div>
+    <div class="glass rounded-2xl p-6"><div class="text-3xl mb-3">🛒</div><h3 class="font-bold">Smart Cart</h3><p class="mt-2 text-sm text-slate-400">Full cart with quantity controls, macro totals, and one-click checkout.</p></div>
+  </div>
+</section>
+</main>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════════════════════ -->
+<footer class="border-t border-white/5 bg-[#080e1a]/60 py-8 text-center text-xs text-slate-600">
+  <p>Built with ❤️ for the AMD Slingshot Hackathon — <strong class="text-slate-400">NutriFlow</strong> © 2026</p>
+  <p class="mt-1">Node.js · Express · SQLite · Nunjucks · Tailwind CSS</p>
+</footer>
+
+<!-- ══ TOAST ════════════════════════════════════════════════════════════════ -->
+<div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+  <div id="toast-inner" class="flex items-center gap-3 rounded-xl bg-green-500 px-5 py-3 text-sm font-semibold text-white shadow-xl animate-slide-up">
+    <span id="toast-msg"></span>
+    <a href="/cart" class="underline underline-offset-2 opacity-80 hover:opacity-100">View Cart →</a>
+  </div>
+</div>
+
+<!-- ══ SCRIPTS ═══════════════════════════════════════════════════════════════ -->
+<script>
+// ── Cart badge helpers ──────────────────────────────────────────────────────
+function updateBadge(count) {
+  const badge = document.getElementById('cart-badge');
+  const heroCount = document.getElementById('hero-cart-count');
+  if (badge) {
+    badge.textContent = count;
+    badge.classList.toggle('hidden', count === 0);
+  }
+  if (heroCount) heroCount.textContent = count;
+}
+
+// ── Add to Cart ─────────────────────────────────────────────────────────────
+async function addToCart(foodId, name, btn) {
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳ Adding…';
+  btn.disabled = true;
+  try {
+    const res  = await fetch('/cart/add', {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json' },
+      body:    JSON.stringify({ food_id: foodId }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      updateBadge(data.cartCount);
+      btn.innerHTML = '✅ Added!';
+      showToast(`🛒 ${name} added to cart!`);
+      setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 2000);
     }
-  </script>
+  } catch(e) {
+    showToast('🔴 Error adding item', true);
+    btn.innerHTML = orig;
+    btn.disabled = false;
+  }
+}
+
+// ── Category filter ─────────────────────────────────────────────────────────
+function filterCat(cat) {
+  document.querySelectorAll('.food-card').forEach(c => {
+    c.style.display = (cat === 'all' || c.dataset.category === cat) ? '' : 'none';
+  });
+  document.querySelectorAll('.flt').forEach(b => {
+    const on = b.dataset.cat === cat;
+    b.className = b.className
+      .replace(/bg-green-500\/20|text-green-300|border-green-500\/30|bg-slate-700\/50|text-slate-400|border-white\/5/g,'').trim();
+    b.className += on
+      ? ' bg-green-500/20 text-green-300 border border-green-500/30'
+      : ' bg-slate-700/50 text-slate-400 border border-white/5';
+  });
+}
+
+// ── Recommendation form ─────────────────────────────────────────────────────
+async function submitGoal(e) {
+  e.preventDefault();
+  const goal = document.querySelector('input[name="goal"]:checked')?.value;
+  if (!goal) return;
+  const btn = document.getElementById('rec-btn');
+  btn.textContent = '⏳ Fetching…'; btn.disabled = true;
+  try {
+    const res  = await fetch('/recommend', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ goal }),
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast('⚠️ ' + (data.error||'Error'), true); return; }
+    renderResults(data);
+  } catch(e) { showToast('🔴 Network error', true); }
+  finally { btn.textContent = '✨ Show My Recommendations'; btn.disabled = false; }
+}
+
+function renderResults(data) {
+  document.getElementById('rec-placeholder').classList.add('hidden');
+  const box = document.getElementById('rec-results');
+  box.classList.remove('hidden');
+  box.innerHTML = `<div class="flex items-center gap-3 mb-4">
+    <div class="h-px flex-1 bg-white/10"></div>
+    <span class="text-xs font-bold uppercase tracking-wider text-green-400">${data.count} Results · ${data.goal}</span>
+    <div class="h-px flex-1 bg-white/10"></div></div>`;
+  data.items.forEach((item, i) => {
+    const col = item.nutriscore>=70?'#4ade80':item.nutriscore>=45?'#facc15':'#f87171';
+    const off = (125.66*(1-item.nutriscore/100)).toFixed(2);
+    const el = document.createElement('div');
+    el.className = 'flex items-center gap-4 rounded-xl bg-white/5 border border-white/8 p-4 animate-slide-up';
+    el.style.animationDelay = `${i*.06}s`;
+    el.innerHTML = `
+      <div class="text-3xl">${item.emoji}</div>
+      <div class="flex-1 min-w-0">
+        <div class="font-bold truncate">${item.name}</div>
+        <div class="text-xs text-slate-500 mt-0.5">${item.calories}kcal · ${item.protein}g protein · ${item.fiber}g fiber</div>
+      </div>
+      <button onclick="addToCart(${item.id},'${item.name.replace(/'/g,"\\'")}',this)"
+              class="flex-shrink-0 rounded-lg bg-green-500/20 text-green-300 border border-green-500/30 px-3 py-1.5 text-xs font-bold hover:bg-green-500/40 active:scale-95 transition-all">
+        🛒 Add
+      </button>
+      <div class="relative flex-shrink-0">
+        <svg class="h-12 w-12 -rotate-90" viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="20" fill="none" stroke="#1e293b" stroke-width="4"/>
+          <circle cx="24" cy="24" r="20" fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="${off}"/>
+        </svg>
+        <span class="absolute inset-0 flex items-center justify-center text-[.65rem] font-black">${item.nutriscore}</span>
+      </div>`;
+    box.appendChild(el);
+  });
+}
+
+// ── Toast ───────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, isError=false) {
+  clearTimeout(toastTimer);
+  const inner = document.getElementById('toast-inner');
+  const msgEl = document.getElementById('toast-msg');
+  inner.className = inner.className.replace(/bg-green-500|bg-red-500/g, isError?'bg-red-500':'bg-green-500');
+  // hide the "View Cart" link on errors
+  inner.querySelector('a').style.display = isError ? 'none' : '';
+  msgEl.textContent = msg;
+  document.getElementById('toast').classList.remove('hidden');
+  toastTimer = setTimeout(() => document.getElementById('toast').classList.add('hidden'), 3000);
+}
+</script>
 </body>
 </html>
